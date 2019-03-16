@@ -1,6 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Hedder from './Header'
+import Volunteers from './Volunteers'
 
 class Dashboard extends React.Component{
 
@@ -15,6 +16,7 @@ class Dashboard extends React.Component{
                 
                     <div>
                     <Hedder/>
+                    <Volunteers/>
                     {console.log('-------------')}
                     {console.log(this.props)}
                     {console.log(this.props.activeUser.activeUser.fname)}

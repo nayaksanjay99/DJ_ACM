@@ -26,7 +26,7 @@ app.post("/login", async (req, res, next) => {
   var rex = null;
   try {
     rex = await db
-      .collection("login")
+      .collection("data")
       .find({ mail: req.body.mailid })
       .toArray();
     console.log(rex);
@@ -45,7 +45,7 @@ app.post("/login", async (req, res, next) => {
           mail: rest[0].mail,
           pass: rest[0].pass,
           notifications: rest[0].notifications,
-          isAdmin:rest[0].isAdmin
+          types:rest[0].type
         };
         console.log(obj);
         res.json(obj);
@@ -59,38 +59,24 @@ app.post("/login", async (req, res, next) => {
   }
 });
 
-app.post("/admin/users", async (req, res, next) => {
+app.post("/users", async (req, res, next) => {
   console.log("here");
   console.log(req.data);
   console.log(req.body.mailid);
-  const db = getdb();
-  var rex = null;
+  // const db = getdb();
+  // var rex = null;
   try {
-    rex = await db
-      .collection("login")
-      .find({ mail: req.body.mailid })
-      .toArray();
-    console.log(rex);
-    if (rex.length != 0) rest[0] = rex[0];
-    else rest = [];
-    console.log(rest);
-    if (rest.length) {
-      if (rest[0].pass === req.body.password) {
-        console.log("correct password");
-        if (rest[0].isAdmin) {
-          const db1 = getdb();
-          const getAllUserAsync = await db1
-            .collection("login")
-            .find()
-            .toArray();
-          if (getAllUserAsync.length != 0) rest = getAllUserAsync;
-          else rest = [];
-          console.log(rest);
-          if (rest.length) res.json(rest);
-        }
-        res.json("Not Admin");
-      } else res.json(false);
-    }
+    
+      const db1 = getdb();
+      const getAllUserAsync = await db1
+        .collection("data")
+        .find()
+        .toArray();
+      if (getAllUserAsync.length != 0) rest = getAllUserAsync;
+      else rest = [];
+      console.log(rest);
+      if (rest.length) res.json(rest);
+      else res.json(false)
   } catch (err) {
     console.log(err);
   }
@@ -99,9 +85,10 @@ app.post("/admin/users", async (req, res, next) => {
 app.post("/signup", async (req, res, next) => {
   const db = getdb();
   var rex = null;
+  
   try {
     rex = await db
-      .collection("login")
+      .collection("data")
       .find({ mail: req.body.mail })
       .toArray();
     console.log(rex);
@@ -113,7 +100,7 @@ app.post("/signup", async (req, res, next) => {
         mail: req.body.mail,
         pass: req.body.pass,
         notifications: [],
-        isAdmin:false
+        type:req.body.type
       });
       console.log(result);
       var obj = {
@@ -122,7 +109,7 @@ app.post("/signup", async (req, res, next) => {
         mail: req.body.mail,
         pass: req.body.pass,
         notifications: [],
-        isAdmin: false
+        type: req.body.type
       };
       var transporter = nodemailer.createTransport({
         service: "gmail",
@@ -138,22 +125,109 @@ app.post("/signup", async (req, res, next) => {
         }
       });
 
-      var mailOptions = {
+      // var mailOptions = {
+      //   from: "Sanjay<sanjayjnayak9@gmail.com>",
+      //   to: obj.mail,
+      //   subject: "Signup On ACM Hackoject",
+      //   text: "Welcome to The Hackoject organized by DJ-ACM! as a"+obj.type
+      // };
+      // var mailOptionstovolunteer = {
+      //   from: "Sanjay<sanjayjnayak9@gmail.com>",
+      //   to: obj.mail,
+      //   subject: "Signup On ACM Hackoject",
+      //   text: "Welcome to The Hackoject organized by DJ-ACM! as a"+obj.type
+      // };
+      // var mailOptionstomember = {
+      //   from: "Sanjay<sanjayjnayak9@gmail.com>",
+      //   to: obj.mail,
+      //   subject: "Signup On ACM Hackoject",
+      //   text: "Welcome to The Hackoject organized by DJ-ACM! as a"+obj.type
+      // };
+      // var mailOptionstodonor = {
+      //   from: "Sanjay<sanjayjnayak9@gmail.com>",
+      //   to: obj.mail,
+      //   subject: "Signup On ACM Hackoject",
+      //   text: "Welcome to The Hackoject organized by DJ-ACM! as a"+obj.type
+      // };
+
+      transporter.sendMail({
         from: "Sanjay<sanjayjnayak9@gmail.com>",
         to: obj.mail,
         subject: "Signup On ACM Hackoject",
-        text: "Welcome to The Hackoject organized by DJ-ACM!"
-      };
-
-      transporter.sendMail(mailOptions, function(error, info) {
+        text: "Welcome to The Hackoject organized by DJ-ACM! as a"+obj.type
+      }, function(error, info) {
         if (error) {
           console.log(error);
         } else {
           console.log("Email sent: " + info.response);
         }
       });
+
+      const volunteers=await db.collection('data').find({type:"Volunteer"}).toArray()
+      volunteers.forEach(element => {
+        transporter.sendMail({
+          from: "Sanjay<sanjayjnayak9@gmail.com>",
+          to: element.mail,
+          subject: "Signup On ACM Hackoject",
+          text: "Hello "+element.fname+", DJ-ACM wishes a happy time, we have a newcomer "+obj.fname+" for the position of "+obj.type +". Your regular contribution to our society through our NGO is motivating others to do the same. We thank you for all the support and warmth you provided and hope you will continue this journey.\nThank You,\n\nThis mail was sent to you as are an active volunteer of our NGO."
+        }, function(error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+      });
+
+
+      const Members=await db.collection('data').find({type:"Member"}).toArray()
+      Members.forEach(element => {
+        transporter.sendMail({
+          from: "Sanjay<sanjayjnayak9@gmail.com>",
+          to: element.mail,
+          subject: "Signup On ACM Hackoject",
+          text: "Hello "+element.fname+", DJ-ACM wishes a happy time, we have a newcomer "+obj.fname+" for the position of "+obj.type +". Your regular contribution to our society through our NGO is motivating others to do the same. We thank you for all the support and warmth you provided and hope you will continue this journey.\nThank You,\n\nThis mail was sent to you as are an active member of our NGO."
+        }, function(error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+      });
+      const Donors=await db.collection('data').find({type:"Donor"}).toArray()
+      Donors.forEach(element => {
+        transporter.sendMail({
+          from: "Sanjay<sanjayjnayak9@gmail.com>",
+          to: element.mail,
+          subject: "Signup On ACM Hackoject",
+          text: "Hello "+element.fname+", DJ-ACM wishes a happy time, we have a newcomer "+obj.fname+" for the position of "+obj.type +". Your regular contribution to our society through our NGO is motivating others to do the same. We thank you for all the support and warmth you provided and hope you will continue this journey.\nThank You,\n\nThis mail was sent to you as are an active donor of our NGO."
+        }, function(error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        });
+      });
       res.json(obj);
     } else res.json(false);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post("/delete", async (req, res, next) => {
+  console.log("here");
+  console.log(req.body.mail);
+  // const db = getdb();
+  // var rex = null;
+  try {
+    
+      const db1 = getdb();
+      const ans=await db1.collection("data").deleteOne( { "mail" : req.body.mail } )
+      console.log(ans)
+    res.json(true)
   } catch (err) {
     console.log(err);
   }

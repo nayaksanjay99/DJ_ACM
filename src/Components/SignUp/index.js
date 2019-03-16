@@ -56,7 +56,9 @@ class RegForm extends Component {
             this.setState({confirm:false})
         else
             this.setState({confirm:true})
-        
+            console.log(pass)
+            console.log(cpass)
+        console.log(this.state)
         if(this.state.mail===true&&this.state.names===true&&this.state.surname===true&&this.state.pass===true&&this.state.confirm===true)
         {
             console.log("inside")
@@ -66,13 +68,14 @@ class RegForm extends Component {
             'Accept': 'application/json'
             },
             method:"POST",
-            body:JSON.stringify({"fname":fname,"lname":lname,"mail":mail,"pass":pass})
+            body:JSON.stringify({"fname":fname,"lname":lname,"mail":mail,"pass":pass,"type":this.state.value})
             })
             const data=await res.json()
             if(data!==false){
             this.setState({data})
-
-            console.log(this.state.data)
+                console.log('*************')
+                console.log(data)
+            console.log(this.state)
             this.props.history.push('/')
             }
             else
@@ -102,13 +105,13 @@ class RegForm extends Component {
         if(e.target.value.includes('@')&&e.target.value.includes('.'))
         {
             this.setState({
-                name:true
+                mail:true
             })
         }
         else
         {
             this.setState({
-                name:false
+                mail:false
             })
         }
     }

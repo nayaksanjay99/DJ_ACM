@@ -11,7 +11,7 @@ export const USER_LOGIN = (email, password) => dispatch => {
         lname: user.lname,
         mail: user.mail,
         notifications: user.notifications,
-        isAdmin: user.isAdmin
+        types: user.types
       });
     });
   };

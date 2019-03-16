@@ -3,7 +3,7 @@ const initState={
     lname:"",
     mailid:"",
     notifications:[],
-    isAdmin:false
+    types:false
 }
 
 export default function activeUser(state=initState,action){
@@ -15,7 +15,7 @@ export default function activeUser(state=initState,action){
             lname: action.lname,
             mail: action.mail,
             notifications: action.notifications,
-            isAdmin: action.isAdmin
+            types: action.types
           };
         default :return state
     }
