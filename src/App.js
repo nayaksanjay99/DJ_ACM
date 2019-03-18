@@ -8,16 +8,16 @@ import {BrowserRouter,Switch,Route} from 'react-router-dom'
 class App extends Component {
   render() {
     return (
-        <BrowserRouter>
-          <div>
-              <Switch>
-                <Route exact path="/" component={Home}/>
-                <Route exact path="/login" component={LoginPage}/>
-                <Route exact path="/signup" component={SignUp}/>
-                <Route exact path="/dashboard" component={Dashboard}/>
-              </Switch>
-          </div>
-        </BrowserRouter>
+      <BrowserRouter>
+        <div>
+            <Switch>
+              <Route exact path="/" component={Home}/>
+              <Route exact path="/login" component={LoginPage}/>
+              <Route exact path="/signup" component={SignUp}/>
+              <Route exact path="/dashboard" component={Dashboard}/>
+            </Switch>
+        </div>
+      </BrowserRouter>
     );
   }
 }

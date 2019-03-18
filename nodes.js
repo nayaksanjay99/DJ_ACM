@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 
 var rest = [];
 
+
 app.post("/login", async (req, res, next) => {
   console.log("here");
   console.log(req.data);
@@ -232,6 +233,43 @@ app.post("/delete", async (req, res, next) => {
     console.log(err);
   }
 });
+app.post("/participper", async (req, res, next) => {
+  console.log("here");
+  console.log(req.body.mail);
+  // const db = getdb();
+  // var rex = null;
+  try {
+    
+      const db1 = getdb();
+      const response=await db1.collection('participate').find({"title":req.body.title}).toArray()
+      if(!response[0].participants.includes(req.body.mail))
+      {
+      const ans=await 
+        db1.collection('participate').updateOne(
+           { "title" : req.body.title  },
+           { $push: { "participants" : req.body.mail } }
+        );
+      }
+      const xxx=await db1.collection('participate').find().toArray()
+    res.json(xxx)
+  } catch (err) {
+    console.log(err);
+  }
+});
+app.post("/getAllEvents", async (req, res, next) => {
+  console.log("here");
+  console.log(req.body.mail);
+  const db = getdb();
+  // var rex = null;
+  try {
+    const xxx=await db.collection('participate').find().toArray()
+    console.log('xyxyxyxyxyx')
+    console.log(xxx)
+    res.json(xxx)
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 // app.listen('/updateone',async(req,res,next)=>{
 //   const db = getdb();
@@ -249,6 +287,8 @@ app.post("/delete", async (req, res, next) => {
 // catch(err){
 //   console.log(err)
 // }
+
+
 
 app.listen(3001, () => {
   console.log("now conn");
